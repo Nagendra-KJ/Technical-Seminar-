@@ -97,7 +97,7 @@ def dag_gen():
 
     # add the root node
     n = 1
-    G.add_node(n, rank=0, color='blue')
+    G.add_node(n, rank=0, color='green', weight=randint(1,5))
     nodes.append([n])
     nodes_parent.append(n)
     n = n + 1
@@ -118,10 +118,10 @@ def dag_gen():
             nodes_t.append(n)
             nodes_orphan.append(n)
             color_probability = randint(1,10)
-            node_color='blue'
+            node_color='green'
             if color_probability > 6:
                 node_color = 'red'
-            G.add_node(n, rank=k+1, color=node_color)
+            G.add_node(n, rank=k+1, color=node_color, weight=randint(1,5))
             n = n + 1
 
         nodes.append(nodes_t)
@@ -145,21 +145,22 @@ def dag_gen():
         # connect all orphan to the root node
         for i in nodes_orphan:
             nodes_orphan.remove(i)
-            G.add_edge(1, i, weight=randint(1,5))
+            G.add_edge(1, i)
             
 
     # Dealing with the final layer
     # connect everything together to a final node
+    G.add_node(n, rank=k+1, color='green', weight=randint(1,5))
     for i in nodes_parent:
-        G.add_edge(i, n, weight=randint(1,5))
+        G.add_edge(i, n)
 
     for i in nodes_parent_childless:
-        G.add_edge(i, n, weight=randint(1,5))
+        G.add_edge(i, n)
 
     # connect all orphan to the root node
     for i in nodes_orphan:
         nodes_orphan.remove(i)
-        G.add_edge(1, i, weight=randint(1,5))
+        G.add_edge(1, i)
 
     # handling critical Path
 
@@ -169,6 +170,7 @@ def dag_gen():
     print(nodes)
     
     # return the graph
+    
     return G
 
 
@@ -185,11 +187,7 @@ def dag_plot(G):
     attr_list=G.nodes(data='color')
     for attr in attr_list:
         color_map.append(attr[1])
-    color_map = ['blue' if color is None else color for color in color_map]
-    print(color_map)
-    nx.draw_networkx(G,pos,with_labels=True,node_color=color_map)
-    labels = nx.get_edge_attributes(G,'weight')
-    nx.draw_networkx_edge_labels(G,pos,edge_labels=labels)
+    nx.draw_networkx(G,pos,with_labels=True,node_color=color_map, labels = {n: str(n) + ';' + str(G.nodes[n]['weight']) for n in G.nodes}, node_size=500)
     plt.show()
     plt.savefig('output/graph_small.png')
 

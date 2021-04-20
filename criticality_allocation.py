@@ -1,31 +1,11 @@
 import networkx as nx
+import pickle
+from crit_set_class import criticality_set
 
 class path:
     def __init__(self, node_list, path_len):
         self.node_list = node_list
-        self.path_len = path_len
-
-class criticality_set:
-    def __init__(self):
-        self.node_list = []
-        self.red_time = 0
-        self.green_time = 0
-        self.total_time = self.red_time + self.green_time
-    
-    def add_node(self, node, color, weight):
-        self.node_list.append(node)
-        if color == 'green':
-            self.green_time = self.green_time + weight
-        else:
-            self.red_time = self.red_time + weight
-        self.total_time = self.green_time + self.red_time
-    
-    def print_list(self):
-        print(self.node_list)
-
-    def print_delays(self):
-        print(self.green_time, self.red_time, self.total_time)
-    
+        self.path_len = path_len 
 
 def criticality_allocate(start_node, end_node, path, completed):
     start_crit_set = G.nodes[start_node]['crit_set']
@@ -46,7 +26,6 @@ def criticality_allocate(start_node, end_node, path, completed):
         upper_bound = lower_bound + f - 1
         if cur_pos >= path.index(end_node) - g:
             upper_bound = lower_bound + f
-        print('Allocating for ', cur_node, ' between ', lower_bound, upper_bound)
         cur_node_color = G.nodes[cur_node]['color']
         best_set = lower_bound
         if cur_node_color == 'green':
@@ -123,7 +102,6 @@ for ii in range(1,len(ordered_paths)):
         continue
     M_len = len(M)
     pos = 0
-    print('Allocating for path ', l.node_list)
     while pos < M_len - 1:
         cur_node = M[pos]
         next_node = M[pos+1]
@@ -132,6 +110,6 @@ for ii in range(1,len(ordered_paths)):
             criticality_allocate(cur_node, next_node, l.node_list, completed)
         pos = pos + 1
 
-for crit_set in crit_set_list:
-    crit_set.print_list()
-
+nx.write_gpickle(G,'output/criticality_allocated_graph.gpickle')
+with open('output/criticality_set_allocation.pkl', 'wb') as outfile:
+    pickle.dump(crit_set_list, outfile)

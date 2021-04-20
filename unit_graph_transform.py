@@ -11,7 +11,6 @@ H = nx.DiGraph()
 
 for ind, node in enumerate(G.nodes(data=True)):
     ind = ind + 1
-    print(ind, G.nodes[ind])
     rank = G.nodes[ind]['rank']
     color = G.nodes[ind]['color']
     weight = G.nodes[ind]['weight']
@@ -29,7 +28,10 @@ for ind, node in enumerate(G.nodes(data=True)):
             H.add_edge(f'{ind},{ii-1}',f'{ind},{ii}')
     for pred in preds:
         if pred == source_node:
-            H.add_edge(source_node, f'{ind},1')
+            if ind != sink_node:
+                H.add_edge(source_node, f'{ind},1')
+            else:
+                H.add_edge(source_node,sink_node)
         elif ind == sink_node:
             last = G.nodes[pred]['weight']
             H.add_edge(f'{pred},{last}',sink_node)

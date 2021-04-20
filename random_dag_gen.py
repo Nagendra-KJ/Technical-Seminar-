@@ -1,10 +1,3 @@
-#!/usr/bin/python3
-
-# Randomized DAG Generator
-# by Xiaotian Dai
-# University of York, UK
-# 2020
-
 import networkx as nx
 from   networkx.drawing.nx_agraph import graphviz_layout, to_agraph
 import pygraphviz as pgv
@@ -64,9 +57,8 @@ class GUI:
         # set signal / slots
         self.button_gen.clicked.connect(self.event_on_button_gen_clicked)
 
-        # stary application
+        # start application
         app.exec_()
-
 
     def event_on_button_gen_clicked(self):
         global parallelism, layer_num_min, layer_num_max, connect_prob
@@ -81,7 +73,6 @@ class GUI:
 
 # parameters (default)
 rnd_seed = randint(1, 1000)
-
 
 def dag_gen():
     # data structures
@@ -101,9 +92,6 @@ def dag_gen():
     nodes.append([n])
     nodes_parent.append(n)
     n = n + 1
-
-    print(nodes)
-    print(edges)
 
     # random and remove the source and the sink node
     layer_num_this = randint(layer_num_min - 2, layer_num_max - 2)
@@ -161,16 +149,8 @@ def dag_gen():
     for i in nodes_orphan:
         nodes_orphan.remove(i)
         G.add_edge(1, i)
-
-    # handling critical Path
-
-
-    # set graph properties
-
-    print(nodes)
-    
+  
     # return the graph
-    
     return G
 
 
@@ -178,8 +158,6 @@ def dag_plot(G):
     # layout graph
     #A = to_agraph(G)
     A = nx.nx_agraph.to_agraph(G)
-    print(A)
-    print(type(A))
     A.layout('dot')
 
     color_map=[]
@@ -219,15 +197,5 @@ if __name__ == "__main__":
     # fix random seed
     seed(rnd_seed)
 
-    # load configurations
-    #with open('config.json', 'r') as f:
-    #    array = json.load(f)
-
-    #print(array["tg"])
-
     # initialize GUI
     gui = GUI()
-
-    # for test only
-    #event_on_button_gen_clicked()
-    #plt.show()

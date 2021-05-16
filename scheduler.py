@@ -1,6 +1,6 @@
 import pickle
 import networkx as nx
-
+import json
 
 
 class core:
@@ -59,11 +59,17 @@ with open('output/criticality_set_allocation.pkl', 'rb') as infile:
     except pickle.PicklingError as e:
         print('Got pickling error'.format(e))
 
+with open('config.json') as infile:
+    config = json.load(infile)
+
+
 num_green_cores = input('Enter the number of green cores available:')
 num_red_cores = input('Enter the number of red cores available:')
 
 num_green_cores = int(num_green_cores)
 num_red_cores = int(num_red_cores)
+
+
 
 num_idle_green_cores = num_green_cores
 num_idle_red_cores = num_red_cores
@@ -118,8 +124,11 @@ while len(completed) != len(G.nodes()):
             
 
 nx.write_gpickle(G,'output/time_allocated_graph.gpickle')
-
-
+with open('config.json','w') as outfile:
+    config['green'] = num_green_cores
+    config['red'] = num_red_cores
+    config['Response Time'] = time
+    json.dump(config,outfile)
         
     
     

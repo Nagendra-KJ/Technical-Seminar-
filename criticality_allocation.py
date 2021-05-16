@@ -1,6 +1,7 @@
 import networkx as nx
 import pickle
 from crit_set_class import criticality_set
+import json
 
 class path:
     def __init__(self, node_list, path_len):
@@ -67,6 +68,15 @@ ordered_paths = sorted(paths, key=lambda x:x.path_len, reverse=True)
 lmax = ordered_paths[0]
 completed = []
 
+max_len = lmax.path_len
+with open('config.json') as open_file:
+    config = json.load(open_file)
+
+with open('config.json','w') as outfile:
+    config['Max Length'] = max_len
+    config['source'] = source_node
+    config['sink'] = sink_node
+    json.dump(config, outfile)
 crit_set_list = []
 
 G.nodes[source_node]['crit_set'] = 0

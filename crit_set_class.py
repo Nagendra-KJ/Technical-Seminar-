@@ -4,6 +4,7 @@ class criticality_set:
         self.red_time = 0
         self.green_time = 0
         self.total_time = self.red_time + self.green_time
+        self.wcrt = 0
     
     def add_node(self, node, color, weight):
         self.node_list.append(node)
@@ -18,3 +19,6 @@ class criticality_set:
 
     def print_delays(self):
         print(self.green_time, self.red_time, self.total_time)
+    
+    def print_wcrt(self):
+        print(self.wcrt)

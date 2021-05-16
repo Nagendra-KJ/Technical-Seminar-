@@ -1,7 +1,7 @@
 import pickle
 import networkx as nx
 import json
-import math
+import pandas as pd
 
 def inf_fn(crit_set):
     num_green = -1
@@ -12,8 +12,8 @@ def inf_fn(crit_set):
             num_green = num_green + 1
         else:
             num_red = num_red + 1
-    green_block = math.floor(num_green/config['green'])
-    red_block = math.floor(num_red/config['red'])
+    green_block = num_green/config['green']
+    red_block = num_red/config['red']
     return max(green_block,red_block)
 
 def vol_fn():
@@ -85,10 +85,20 @@ with open('output/criticality_set_allocation.pkl', 'rb') as infile:
 with open('config.json') as infile:
     config = json.load(infile)
 
-
-
+result_file = 'output/results.csv'
+try:
+    df = pd.read_csv(result_file,index_col=0)
+except FileNotFoundError:
+    df = pd.DataFrame(columns=['Jeffery','Han','Base Paper','Actual'])
+    df.to_csv(result_file, index=None)
+    df = pd.read_csv(result_file)
 
 jeffery_wcrt = jeffery_fn()
 han_wcrt = han_fn()
 base_wcrt = base_fn()
-print(config['Response Time'],base_wcrt,han_wcrt,jeffery_wcrt)
+actual = config['Response Time']
+wcrt_dict = {"Jeffery":jeffery_wcrt,"Han":han_wcrt,"Base Paper":base_wcrt,"Actual":actual}
+ndf = pd.DataFrame.from_records([wcrt_dict])
+cdf = pd.concat([df,ndf], ignore_index=True)
+print(cdf)
+cdf.to_csv(result_file)

@@ -75,6 +75,7 @@ def r_prime(node_list):
     return path_len - green_block - red_block
 
 G = nx.read_gpickle('output/criticality_allocated_graph.gpickle')
+H = nx.read_gpickle('output/graph.gpickle')
 with open('output/criticality_set_allocation.pkl', 'rb') as infile:
     try:
         crit_set_list = pickle.load(infile)
@@ -89,7 +90,7 @@ result_file = 'output/results.csv'
 try:
     df = pd.read_csv(result_file,index_col=0)
 except FileNotFoundError:
-    df = pd.DataFrame(columns=['Jeffery','Han','Base Paper','Actual'])
+    df = pd.DataFrame(columns=['Number of Nodes','Jeffery','Han','Base Paper','Actual','Improvement in Percent'])
     df.to_csv(result_file, index=None)
     df = pd.read_csv(result_file)
 
@@ -97,7 +98,9 @@ jeffery_wcrt = jeffery_fn()
 han_wcrt = han_fn()
 base_wcrt = base_fn()
 actual = config['Response Time']
-wcrt_dict = {"Jeffery":jeffery_wcrt,"Han":han_wcrt,"Base Paper":base_wcrt,"Actual":actual}
+num_nodes = len(H.nodes())
+improvement = (jeffery_wcrt - actual)/jeffery_wcrt * 100
+wcrt_dict = {"Number of Nodes":num_nodes,"Jeffery":jeffery_wcrt,"Han":han_wcrt,"Base Paper":base_wcrt,"Actual":actual,"Improvement in Percent":improvement}
 ndf = pd.DataFrame.from_records([wcrt_dict])
 cdf = pd.concat([df,ndf], ignore_index=True)
 print(cdf)
